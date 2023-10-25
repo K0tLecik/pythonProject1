@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 # static choices
@@ -18,12 +20,37 @@ class Team(models.Model):
         return f"{self.name}"
 
 
-class Person(models.Model):
+##Dublowało się z lab3
+# class Person(models.Model):
+#
+#     name = models.CharField(max_length=60)
+#     shirt_size = models.CharField(max_length=1, choices=SHIRT_SIZES, default=SHIRT_SIZES[0][0])
+#     month_added = models.IntegerField(choices=MONTHS.choices, default=MONTHS.choices[0][0])
+#     team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL)
+#
+#     def __str__(self):
+#         return self.name
 
-    name = models.CharField(max_length=60)
-    shirt_size = models.CharField(max_length=1, choices=SHIRT_SIZES, default=SHIRT_SIZES[0][0])
-    month_added = models.IntegerField(choices=MONTHS.choices, default=MONTHS.choices[0][0])
-    team = models.ForeignKey(Team, null=True, blank=True, on_delete=models.SET_NULL)
+class Position(models.Model):
+    # id = models.UUIDField(primary_key=True)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
+
+
+class Person(models.Model):
+    genders = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other')
+    )
+    first_name = models.CharField(max_length=50)
+    second_name = models.CharField(max_length=50)
+    gender = models.CharField(max_length=1, choices=genders)
+    position = models.ForeignKey(Position, null=True, on_delete=models.SET_NULL)
+    date_added = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.first_name + ' ' + self.second_name}"
