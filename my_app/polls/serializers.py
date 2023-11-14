@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Person, Position
+from django.utils import timezone
 
 
 class PersonSerializer(serializers.Serializer):
@@ -19,6 +20,25 @@ class PersonSerializer(serializers.Serializer):
         instance.position = validated_data.get('position', instance.position)
         instance.save()
         return instance
+
+    def validate_first_name(self, data):
+        if not data.isalpha():
+            raise serializers.ValidationError("Pole 'first_name' może zawierać tylko litery.")
+        return data
+
+
+
+    def validate_second_name(self, data):
+        if not data.isalpha():
+            raise serializers.ValidationError("Pole 'second_name' może zawierać tylko litery.")
+        return data
+
+
+
+    def validate_date_added(self, data):
+        if data > timezone.now():
+            raise serializers.ValidationError("Data dodania nie może być z przyszłości.")
+        return data
 
 
 class PositionModelSerializer(serializers.ModelSerializer):
