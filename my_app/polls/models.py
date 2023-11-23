@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.contrib.auth.models import User
 
 # static choices
 MONTHS = models.IntegerChoices('Miesiace', 'Styczeń Luty Marzec Kwiecień Maj Czerwiec Lipiec Sierpień Wrzesień Październik Listopad Grudzień')
@@ -46,6 +47,7 @@ class Person(models.Model):
         ('F', 'Female'),
         ('O', 'Other')
     )
+    owner = models.ForeignKey(User, related_name='owned_people', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     second_name = models.CharField(max_length=50)
     gender = models.CharField(max_length=1, choices=genders)
