@@ -54,5 +54,10 @@ class Person(models.Model):
     position = models.ForeignKey(Position, null=True, on_delete=models.SET_NULL)
     date_added = models.DateField(auto_now_add=True)
 
+    class Meta:
+        permissions = [
+            ("can_view_other_persons", "Can view other persons"),
+        ]
+
     def __str__(self):
         return f"{self.first_name + ' ' + self.second_name}"

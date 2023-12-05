@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
@@ -6,6 +7,8 @@ from rest_framework.response import Response
 from .models import Person, Position
 from .serializers import PersonSerializer
 from .permissions import IsOwner
+from django.http import HttpResponse
+from django.contrib.auth.decorators import permission_required
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -84,3 +87,20 @@ def position_members(request, stanowisko_id):
         osoby = Person.objects.filter(stanowisko=stanowisko)
         serializer = PersonSerializer(osoby, many=True)
         return Response(serializer.data)
+
+
+@permission_required('polls.view_person')
+def custom_person_view(request, pk):
+    try:
+        person = Person.objects.get(pk=pk)
+        user = request.user
+        can_view_other_persons = user.has_perm('polls.can_view_other_persons')
+        is_owner = person.owner == user
+
+        if can_view_other_persons or is_owner:
+            return HttpResponse(f"Ten użytkownik nazywa się {person.name}")
+        else:
+            raise PermissionDenied()
+
+    except Person.DoesNotExist:
+        return HttpResponse(f"W bazie nie ma użytkownika o id={pk}.")
