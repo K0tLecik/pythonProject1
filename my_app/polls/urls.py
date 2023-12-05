@@ -7,5 +7,6 @@ urlpatterns = [
     path('persons/update/<int:pk>/', views.person_update),
     path('persons/delete/<int:pk>/', views.person_delete),
     path('api-auth/', include('rest_framework.urls')),
-    path('position/<int:pk>/members/', views.position_members)
+    path('position/<int:pk>/members/', views.position_members),
+    path('person/<int:pk>/', views.custom_person_view, name='custom-person-view'),
 ]
